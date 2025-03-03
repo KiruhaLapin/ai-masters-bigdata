@@ -16,7 +16,7 @@ num_transformer = Pipeline([
     ('scaler', StandardScaler()),
 ])
 cat_transformer = Pipeline(steps=[
-    ('imp_most_freq', SimpleImputer(strategy='most_frequent')),
+    ('imp_most_freq', SimpleImputer(strategy='constant',fill_value='missing')),
     ('ohe', OneHotEncoder(handle_unknown='ignore'))
 ])
 ct = ColumnTransformer(
