@@ -40,20 +40,19 @@ logging.info(f"TRAIN_PATH {train_path}")
 #
 
 read_table_opts = dict(sep="\t", names=fields, index_col=False)
-data = pd.read_table(train_path, **read_table_opts)
-target = data.label
-X = data.drop(columns=['id','label'])
+df = pd.read_table(train_path, **read_table_opts)
+target = df.label
+X = df.drop(columns=["id","label"])
+
 
 #split train/test
 X_train, X_test, y_train, y_test = train_test_split(
-    X,target, test_size=0.33, random_state=42
+    X, target, test_size=0.33, random_state=42
 )
 
 #
 # Train the model
 #
-
-
 model.fit(X_train, y_train)
 
 model_score = model.score(X_test, y_test)

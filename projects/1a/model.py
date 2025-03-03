@@ -22,7 +22,7 @@ cat_transformer = Pipeline(steps=[
 ct = ColumnTransformer(
     transformers=[
         ('num', num_transformer, numeric_features),
-       #('cat', cat_transformer, categorical_features),
+       ('cat', cat_transformer, categorical_features[:14]),
     ]
 )
 
