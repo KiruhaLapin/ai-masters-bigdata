@@ -5,6 +5,7 @@ from joblib import dump
 from model import fields
 
 def train_and_save_model(project_id, dataset_path):
+    print(dataset_path)
     data = pd.read_csv(dataset_path, delimiter='\t', names=fields)
     target = data.label
     X = data.drop(columns=['id','label'])

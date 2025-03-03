@@ -15,4 +15,4 @@ REPO_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 TRAIN_SCRIPT="$REPO_ROOT/projects/$PROJECT_ID/train.py"
 
 # Запускаем Python-скрипт с переданными аргументами
-python3 "$TRAIN_SCRIPT" "$PROJECT_ID" "$REPO_ROOT/$DATASET_PATH"
+python3 "$TRAIN_SCRIPT" "$PROJECT_ID" "$DATASET_PATH"
