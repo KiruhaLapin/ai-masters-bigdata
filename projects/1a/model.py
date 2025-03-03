@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.linear_model import LogisticRegression

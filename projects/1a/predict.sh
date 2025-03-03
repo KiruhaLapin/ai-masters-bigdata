@@ -1,14 +1,20 @@
 #!/bin/bash
 
-FILES_TO_SEND=$1
-INPUT_DATASET=$2  # Входные данные (на HDFS)
-OUTPUT_DATASET=$3 # Выходной файл
-SCRIPT_TO_RUN=$4  # Скрипт предсказаний
+# 1st arg - files to send with the job
+# 2nd arg - input path
+# 3rd arg - output path
+# 4th arg - mapper file
 
-# Запуск map-reduce задачи
-hadoop jar /usr/lib/hadoop-mapreduce/hadoop-streaming.jar\
-    -files $FILES_TO_SEND \
-    -mapper "python3 $SCRIPT_TO_RUN" \
-    -input $INPUT_DATASET \
-    -output $OUTPUT_DATASET
+HADOOP_EXE=/usr/bin/yarn
+HADOOP_STREAM_JAR=/usr/lib/hadoop-mapreduce/hadoop-streaming.jar
+
+FILES=$1
+INPUT=$2
+OUTPUT=$3
+MAPPER=$4
+
+$HADOOP_EXE jar $HADOOP_STREAM_JAR  -files $FILES -D mapred.reduce.tasks=0 -input $INPUT -output $OUTPUT -mapper $MAPPER
+
+
+
 

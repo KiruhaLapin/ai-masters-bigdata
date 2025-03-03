@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 def filter_cond(line_dict):
 	"""Filter function
 	Takes a dict with field names and values as the argument
