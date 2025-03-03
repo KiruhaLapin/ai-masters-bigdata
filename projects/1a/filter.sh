@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Получаем аргументы
+FILES_TO_SEND=$1  # Файлы (скрипт, зависимости и т. д.)
+INPUT_DATASET=$2  # Входные данные на HDFS
+OUTPUT_DATASET=$3 # Выходной файл на HDFS
+MAPPER_SCRIPT=$4  # Скрипт фильтрации (filter.py)
+
+# Запуск map-reduce задачи
+hadoop jar $HADOOP_STREAMING \
+    -files $FILES_TO_SEND \
+    -mapper "python3 $MAPPER_SCRIPT" \
+    -input $INPUT_DATASET \
+    -output $OUTPUT_DATASET
+
