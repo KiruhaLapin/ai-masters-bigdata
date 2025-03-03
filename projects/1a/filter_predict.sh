@@ -8,7 +8,7 @@ MAPPER_SCRIPT=$4  # Скрипт фильтрации (filter.py)
 REDUCER_SCRIPT=$5 # Скрипт предсказания (predict.py)
 
 # Запуск map-reduce задачи
-hadoop jar $HADOOP_STREAMING \
+hadoop jar /usr/lib/hadoop-mapreduce/hadoop-streaming.jar\
     -files $FILES_TO_SEND \
     -mapper "python3 $MAPPER_SCRIPT" \
     -reducer "python3 $REDUCER_SCRIPT" \

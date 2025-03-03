@@ -6,7 +6,7 @@ OUTPUT_DATASET=$3 # Выходной файл
 SCRIPT_TO_RUN=$4  # Скрипт предсказаний
 
 # Запуск map-reduce задачи
-hadoop jar $HADOOP_STREAMING \
+hadoop jar /usr/lib/hadoop-mapreduce/hadoop-streaming.jar\
     -files $FILES_TO_SEND \
     -mapper "python3 $SCRIPT_TO_RUN" \
     -input $INPUT_DATASET \

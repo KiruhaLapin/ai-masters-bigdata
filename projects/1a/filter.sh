@@ -7,7 +7,7 @@ OUTPUT_DATASET=$3 # Выходной файл на HDFS
 MAPPER_SCRIPT=$4  # Скрипт фильтрации (filter.py)
 
 # Запуск map-reduce задачи
-hadoop jar $HADOOP_STREAMING \
+hadoop jar /usr/lib/hadoop-mapreduce/hadoop-streaming.jar\
     -files $FILES_TO_SEND \
     -mapper "python3 $MAPPER_SCRIPT" \
     -input $INPUT_DATASET \
