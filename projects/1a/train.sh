@@ -14,5 +14,12 @@ REPO_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 # Путь к скрипту train.py
 TRAIN_SCRIPT="$REPO_ROOT/projects/$PROJECT_ID/train.py"
 
-# Запускаем Python-скрипт с переданными аргументами
-python3 "$TRAIN_SCRIPT" "$PROJECT_ID" "$DATASET_PATH"
+if [[ "$DATASET_PATH" = /* ]]; then
+    FINAL_PATH="$DATASET_PATH"
+else
+    FINAL_PATH="$REPO_ROOT/$DATASET_PATH"
+fi
+
+python3 "$TRAIN_SCRIPT" "$PROJECT_ID" "$FINAL_PATH"
+
+
