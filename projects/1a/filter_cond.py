@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 def filter_cond(line_dict):
 	"""Filter function

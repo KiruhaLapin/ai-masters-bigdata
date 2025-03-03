@@ -29,6 +29,8 @@ if len(filter_cond_files) != 1:
 exec(open(filter_cond_files[0]).read())
 
 #
+# dataset fields
+#
 
 #
 # Optional argument
@@ -62,7 +64,7 @@ for line in sys.stdin:
 
     #unpack into a tuple/dict
     values = line.rstrip().split('\t')
-    hotel_record = dict(zip(fields, values)) #Hotel(values)
+    hotel_record = dict(zip(fields[0:1]+fields[2:], values)) #Hotel(values)
 
     #apply filter conditions
     if filter_cond(hotel_record):

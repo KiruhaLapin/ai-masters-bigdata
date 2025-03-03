@@ -19,15 +19,14 @@ logging.info("ARGS {}".format(sys.argv[1:]))
 #load the model
 model = load("1a.joblib")
 
-
 #read and infere
 read_opts=dict(
-        sep='\t', names=fields, index_col=False, header=None,
+        sep='\t', names=fields[:1]+fields[2:], index_col=False, header=None,
         iterator=True, chunksize=100
 )
 
 for df in pd.read_csv(sys.stdin, **read_opts):
     pred = model.predict_proba(df)
-    out = zip(df.doc_id, pred)
+    out = zip(df.id, pred)
     print("\n".join(["{0},{1}".format(*i) for i in out]))
 
