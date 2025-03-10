@@ -1,7 +1,5 @@
-CREATE TABLE IF NOT EXISTS KiruhaLapin_hw2_pred (
+CREATE TABLE KiruhaLapin_hw2_pred (
     id STRING,
     prediction DOUBLE
 )
-STORED AS PARQUET
-LOCATION 'hdfs:/user/KiruhaLapin_hw2_pred';
-
+LOCATION 'KiruhaLapin_hw2_pred';
