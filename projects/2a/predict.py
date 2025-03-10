@@ -27,11 +27,19 @@ read_opts=dict(
         iterator=True, chunksize=100
 )
 
-for df in pd.read_csv(sys.stdin, **read_opts):
-    df.replace(r"\N", np.nan, inplace=True)
-    df.replace("NULL", np.nan, inplace=True)
-    df.replace("", np.nan, inplace=True)
-    pred = model.predict_proba(df)
-    out = zip(df.id.values, pred)
-    print("\n".join([f"{i[0]}\t{i[1][1]}" for i in out]))
+try:
+    for df in pd.read_csv(sys.stdin, **read_opts):
+        logger.info(f"Processing DataFrame:\n{df.head()}")
 
+        # Обработка NULL-значений
+        df.replace(r"\N", np.nan, inplace=True)
+        df.replace("NULL", np.nan, inplace=True)
+        df.replace("", np.nan, inplace=True)
+
+        # Предсказание
+        pred = model.predict_proba(df)
+        out = zip(df.id.values, pred)
+        print("\n".join([f"{i[0]}\t{i[1][1]}" for i in out]))
+except Exception as e:
+    logger.error(f"Error during processing: {e}")
+    raise

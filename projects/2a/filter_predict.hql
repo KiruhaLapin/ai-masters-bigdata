@@ -1,4 +1,4 @@
-CREATE EXTERNAL TABLE IF NOT EXISTS source_table_from_file (
+CREATE TEMPORARY EXTERNAL TABLE IF NOT EXISTS source_table_from_file (
     id INT,
     if1 INT,
     if2 INT,
@@ -42,9 +42,13 @@ CREATE EXTERNAL TABLE IF NOT EXISTS source_table_from_file (
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '\t'
-LINES TERMINATED BY '\n' 
-STORED AS TEXTFILE 
+LINES TERMINATED BY '\n'
+NULL DEFINED AS ''
+STORED AS TEXTFILE
 LOCATION '/datasets/criteo/testdir';
+
+SELECT * FROM source_table_from_file LIMIT 10;
+
 
 ADD FILE projects/2a/predict.py;
 
@@ -52,7 +56,7 @@ INSERT INTO TABLE hw2_pred
 SELECT
     TRANSFORM (id, if1, if2, if3, if4, if5, if6, if7, if8, if9, if10, if11, if12, if13, cf1, cf2, cf3, cf4, cf5, cf6, cf7, cf8, cf9, cf10, cf11, cf12, cf13, cf14, cf15, cf16, cf17, cf18, cf19, cf20, cf21, cf22, cf23, cf24, cf25, cf26)
     USING '/opt/conda/envs/dsenv/bin/python3 predict.py'
-    AS (id STRING, prediction DOUBLE)
+    AS (id, prediction)
 FROM
     source_table_from_file
 WHERE

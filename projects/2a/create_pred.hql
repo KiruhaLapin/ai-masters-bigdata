@@ -1,5 +1,9 @@
 CREATE TABLE hw2_pred (
-    id STRING,
+    id INT,
     prediction DOUBLE
 )
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+STORED AS TEXTFILE
 LOCATION 'KiruhaLapin_hw2_pred';
+
