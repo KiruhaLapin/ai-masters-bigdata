@@ -49,7 +49,7 @@ STORED AS TEXTFILE
 LOCATION '/datasets/criteo/testdir';
 
 ADD FILE projects/2a/predict.py;
-ADD FILE 2a.joblib 
+ADD FILE 2a.joblib; 
 
 INSERT INTO TABLE hw2_pred
 SELECT
