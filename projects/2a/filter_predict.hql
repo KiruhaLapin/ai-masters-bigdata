@@ -47,7 +47,7 @@ FIELDS TERMINATED BY '\t'
 STORED AS TEXTFILE
 LOCATION '/datasets/criteo/testdir';
 
-ADD FILE /projects/2a/predict.py;
+ADD FILE projects/2a/predict.py;
 
 INSERT INTO TABLE hw2_pred
 SELECT
