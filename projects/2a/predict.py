@@ -4,6 +4,7 @@ import sys, os
 import logging
 from joblib import load
 import pandas as pd
+import numpy as np
 
 sys.path.append('.')
 from model import fields
@@ -27,6 +28,9 @@ read_opts=dict(
 )
 
 for df in pd.read_csv(sys.stdin, **read_opts):
+    df.replace(r"\N", np.nan, inplace=True)
+    df.replace("NULL", np.nan, inplace=True)
+    df.replace("", np.nan, inplace=True)
     pred = model.predict_proba(df)
     out = zip(df.id.values, pred)
     print("\n".join([f"{i[0]}\t{i[1][1]}" for i in out]))
