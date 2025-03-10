@@ -29,7 +29,7 @@ read_opts=dict(
 
 try:
     for df in pd.read_csv(sys.stdin, **read_opts):
-        logger.info(f"Processing DataFrame:\n{df.head()}")
+        logging.info(f"Processing DataFrame:\n{df.head()}")
 
         # Обработка NULL-значений
         df.replace(r"\N", np.nan, inplace=True)
@@ -41,5 +41,5 @@ try:
         out = zip(df.id.values, pred)
         print("\n".join([f"{i[0]}\t{i[1][1]}" for i in out]))
 except Exception as e:
-    logger.error(f"Error during processing: {e}")
+    logging.error(f"Error during processing: {e}")
     raise

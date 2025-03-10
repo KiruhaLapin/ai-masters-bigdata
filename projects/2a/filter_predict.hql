@@ -51,6 +51,8 @@ SELECT * FROM source_table_from_file LIMIT 10;
 
 
 ADD FILE projects/2a/predict.py;
+ADD FILE projects/2a/model.py;
+ADD FILE 2a.joblib;
 
 INSERT INTO TABLE hw2_pred
 SELECT
