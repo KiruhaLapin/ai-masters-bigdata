@@ -17,7 +17,7 @@ logging.info("SCRIPT CALLED AS {}".format(sys.argv[0]))
 logging.info("ARGS {}".format(sys.argv[1:]))
 
 #load the model
-model = load("1a.joblib")
+model = load("2a.joblib")
 
 
 #read and infere
