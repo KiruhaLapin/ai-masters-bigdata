@@ -1,4 +1,4 @@
-CREATE TABLE KiruhaLapin_hw2_pred (
+CREATE TABLE hw2_pred (
     id STRING,
     prediction DOUBLE
 )
