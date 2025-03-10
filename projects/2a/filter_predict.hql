@@ -1,4 +1,4 @@
-ADD FILE /project/2a/predict.py;
+ADD FILE projects/2a/predict.py;
 
 INSERT INTO TABLE hw2_pred
 SELECT
