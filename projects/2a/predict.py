@@ -26,7 +26,7 @@ read_opts=dict(
         iterator=True, chunksize=100
 )
 
-
+print("ASDSADAFJKDGKSDJKGJKHFNJKBJKFBJK")
 for df in pd.read_csv(sys.stdin, **read_opts):
     pred = model.predict_proba(df)
     out = zip(df.id.values, pred)
