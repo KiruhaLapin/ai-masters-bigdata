@@ -72,5 +72,5 @@ ans = find_shortest_path(spark, df, finish, start)
 ans.withColumn("reversed_path", F.expr("reverse(split(path, '->'))")) \
    .withColumn("reversed_path", F.expr("concat_ws(',', reversed_path)")) \
    .select("reversed_path") \
-   .write.mode("overwrite").csv(path_to_ans, header=False)
+   .write.mode("overwrite").option("quote", "").csv(path_to_ans, header=False)
 
