@@ -69,5 +69,6 @@ ans = find_shortest_path(spark, df, start, finish)
 ans.withColumn("path", F.expr("split(path, '->')")) \
    .withColumn("path", F.expr("concat_ws(',', path)")) \
    .select("path") \
-   .write.mode("overwrite").option("quote", "").csv(path_to_ans, header=False)
+   .write.mode("overwrite").option("delimiter", ",").csv(path_to_ans, header=False)
+
 
