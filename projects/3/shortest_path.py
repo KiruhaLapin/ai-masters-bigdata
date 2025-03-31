@@ -11,8 +11,8 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 
-start = sys.argv[1]
-finish = sys.argv[2]
+start = int(sys.argv[1])
+finish = int(sys.argv[2])
 path_to_df = sys.argv[3]
 path_to_ans = sys.argv[4]
 
