@@ -66,8 +66,8 @@ log_schema = StructType(fields=[
 
 df = spark.read.csv(path_to_df, sep='\t', schema=log_schema)
 ans = find_shortest_path(spark, df, start, finish)
-ans.withColumn("reversed_path", F.expr("reverse(split(path, '->'))")) \
-   .withColumn("reversed_path", F.expr("concat_ws(',', reversed_path)")) \
-   .select("reversed_path") \
+ans.withColumn("path", F.expr("split(path, '->')")) \
+   .withColumn("path", F.expr("concat_ws(',', path)")) \
+   .select("path") \
    .write.mode("overwrite").option("quote", "").csv(path_to_ans, header=False)
 
