@@ -16,16 +16,15 @@ finish = sys.argv[2]
 path_to_df = sys.argv[3]
 path_to_ans = sys.argv[4]
 
-def find_shortest_path(spark, edges_df, start_user, target_user, max_iter=100):
+def find_shortest_path(spark, edges_df, start_user, target_user, max_iter=1000000):
     """
     Находит ВСЕ кратчайшие пути от start_user до target_user, учитывая направление follower_id -> user_id.
     """
-    # Разворачиваем направление графа
+    
     followers_graph = edges_df.groupBy("follower_id")\
                              .agg(F.collect_list("user_id").alias("following"))\
                              .withColumnRenamed("follower_id", "user_id")
 
-    # Инициализируем расстояния
     distances = spark.createDataFrame(
         [(start_user, 0, [str(start_user)])],
         ["user_id", "distance", "paths"]
