@@ -17,8 +17,15 @@ path_to_df = sys.argv[3]
 path_to_ans = sys.argv[4]
 
 def find_shortest_path(spark, edges_df, start_user, target_user, max_iter=100):
-    followers_graph = edges_df.groupBy("user_id")\
-                             .agg(F.collect_list("follower_id").alias("followers"))
+    """
+    Находит ВСЕ кратчайшие пути от start_user до target_user, учитывая направление follower_id -> user_id.
+    """
+    # Разворачиваем направление графа
+    followers_graph = edges_df.groupBy("follower_id")\
+                             .agg(F.collect_list("user_id").alias("following"))\
+                             .withColumnRenamed("follower_id", "user_id")
+
+    # Инициализируем расстояния
     distances = spark.createDataFrame(
         [(start_user, 0, [str(start_user)])],
         ["user_id", "distance", "paths"]
@@ -31,25 +38,24 @@ def find_shortest_path(spark, edges_df, start_user, target_user, max_iter=100):
 
         temp = distances.join(followers_graph, "user_id", "inner")\
             .select(
-                F.explode("followers").alias("follower"),
+                F.explode("following").alias("following"),
                 (F.col("distance") + 1).alias("distance"),
                 F.col("paths")
             )
-        
+
         new_distances = temp.withColumn(
             "paths",
-            F.expr("transform(paths, x -> concat(x, '->', follower))")
-        ).withColumnRenamed("follower", "user_id")
+            F.expr("transform(paths, x -> concat(x, '->', following))")
+        ).withColumnRenamed("following", "user_id")
 
-        
         distances = distances.union(new_distances)\
             .groupBy("user_id")\
             .agg(
                 F.min("distance").alias("distance"),
                 F.collect_list("paths").alias("paths")
-            ).withColumn("paths", F.flatten("paths"))  
+            ).withColumn("paths", F.flatten("paths"))
 
-    return distances.filter(F.col("user_id") == target_user).select("user_id", "distance",F.explode("paths").alias("path"))
+    return distances.filter(F.col("user_id") == target_user).select("user_id", "distance", F.explode("paths").alias("path"))
 
 
 
@@ -59,7 +65,7 @@ log_schema = StructType(fields=[
 ])
 
 df = spark.read.csv(path_to_df, sep='\t', schema=log_schema)
-ans = find_shortest_path(spark, df, finish, start)
+ans = find_shortest_path(spark, df, start, finish)
 ans.withColumn("reversed_path", F.expr("reverse(split(path, '->'))")) \
    .withColumn("reversed_path", F.expr("concat_ws(',', reversed_path)")) \
    .select("reversed_path") \
