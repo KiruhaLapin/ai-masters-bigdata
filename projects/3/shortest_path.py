@@ -67,16 +67,13 @@ df = spark.read.csv(path_to_df, sep='\t', schema=log_schema)
 ans = find_shortest_path(spark, df, start, finish)
 
 
+
 ans = ans.withColumn("path", F.expr("replace(path, '->', ',')")) \
          .select("path")
 
-ans = ans.orderBy(F.length("path").desc())
+ans.write.mode("overwrite").text(path_to_ans)
 
-ans.write.mode("overwrite") \
-         .option("quote", "") \
-         .option("escapeQuotes", "false") \
-         .option("header", "false") \
-         .option("delimiter", "")
+
 
 
 
