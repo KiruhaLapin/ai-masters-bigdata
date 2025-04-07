@@ -14,7 +14,7 @@ model = PipelineModel.load(model_path)
 schema = StructType([
     StructField("id", IntegerType()),
     StructField("vote", StringType()), 
-    StructField("verified", StringType()),
+    StructField("verified", BooleanType()),
     StructField("reviewTime", StringType()),
     StructField("reviewerID", StringType()),
     StructField("asin", StringType()),

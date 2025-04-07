@@ -16,7 +16,7 @@ schema = StructType([
     StructField("id", IntegerType()),
     StructField("overall", FloatType()),
     StructField("vote", StringType()), 
-    StructField("verified", StringType()),
+    StructField("verified", BooleanType()),
     StructField("reviewTime", StringType()),
     StructField("reviewerID", StringType()),
     StructField("asin", StringType()),
