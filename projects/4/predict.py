@@ -13,7 +13,6 @@ ans_path = sys.argv[3]
 model = PipelineModel.load(model_path)
 schema = StructType([
     StructField("id", IntegerType()),
-    StructField("overall", FloatType()),
     StructField("vote", StringType()), 
     StructField("verified", StringType()),
     StructField("reviewTime", StringType()),
