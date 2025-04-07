@@ -13,10 +13,10 @@ tf_review = HashingTF(inputCol="filtered_review_words", outputCol="raw_review_fe
 idf_review = IDF(inputCol="raw_review_features", outputCol="review_features")
 
 verified_indexer = StringIndexer(inputCol="verified", outputCol="verified_idx")
-asin_indexer = StringIndexer(inputCol="asin", outputCol="asin_idx")
+
 
 assembler = VectorAssembler(
-    inputCols=["review_features", "verified_idx", "asin_idx"],
+    inputCols=["review_features", "verified_idx"],
     outputCol="features"
 )
 
@@ -24,7 +24,7 @@ regressor = RandomForestRegressor(labelCol="overall", featuresCol="features")
 
 pipeline = Pipeline(stages=[
     tokenizer_review, remover_review, tf_review, idf_review,
-    verified_indexer, asin_indexer,
+    verified_indexer,
     assembler,
     regressor
 ])
