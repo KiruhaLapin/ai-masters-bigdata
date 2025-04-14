@@ -8,5 +8,6 @@ entry_points:
       train_path: {type: str}
       solver: {type: str, default: "lbfgs"}
     command: >
-      python train.py --train_path {train_path} --solver {solver}
+      python train.py {train_path} {solver}
+
 
