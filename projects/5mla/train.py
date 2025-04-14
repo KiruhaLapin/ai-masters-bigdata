@@ -55,7 +55,7 @@ with mlflow.start_run():
     y_proba = model.predict_proba(X_test)
     loss = log_loss(y_test, y_proba)
     mlflow.log_metric("log_loss", loss)
-    mlflow.sklearn.log_model(model, artifact_path="models")
+    mlflow.sklearn.log_model(model, artifact_path="model")
 
 
 
