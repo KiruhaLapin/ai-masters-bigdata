@@ -4,8 +4,8 @@ from airflow.sensors.filesystem import FileSensor
 from airflow.operators.bash import BashOperator
 from datetime import datetime
 
-pyspark_python = "/opt/conda/envs/dsenv/bin/python"
 
+#lol
 with DAG(
     dag_id='KiruhaLapin_dag',
     start_date=datetime(2025, 4, 20),
@@ -16,75 +16,77 @@ with DAG(
 
     base_dir = '{{ dag_run.conf["base_dir"] if dag_run else "" }}'
 
+    # Общие настройки для SparkSubmitOperator
+    spark_defaults = {
+        "spark_binary": "/usr/bin/spark3-submit",
+        "conn_id": "spark_default",
+        "env_vars": {
+            "PYSPARK_PYTHON": "/opt/conda/envs/dsenv/bin/python",
+            "PYSPARK_DRIVER_PYTHON": "/opt/conda/envs/dsenv/bin/python",
+            "SPARK_HOME": "/usr/lib/spark3"  # Проверьте точный путь!
+        },
+        "conf": {
+            "spark.yarn.queue": "default",
+            "spark.submit.deployMode": "client"
+        }
+    }
+
     # Feature engineering для тренировочных данных
     feature_eng_train_task = SparkSubmitOperator(
         task_id='feature_eng_train_task',
         application=f"{base_dir}/spark_feature_eng.py",
-        conn_id='spark_default',
-        spark_binary="/usr/bin/spark3-submit",
-        env_vars={
-            "PYSPARK_PYTHON": "/opt/conda/envs/dsenv/bin/python",
-        },
         application_args=[
             '--path-in', '/datasets/amazon/amazon_extrasmall_train.json',
-            '--path-out', 'KiruhaLapin_train_out'
-        ]
+            '--path-out', 'KiruhaLapin_train_out'  # Относительный путь в HDFS
+        ],
+        **spark_defaults
     )
 
-    # Загрузка обработанных тренировочных данных в локальную ФС
+    # Загрузка данных
     download_train_task = BashOperator(
         task_id='download_train_task',
-        bash_command=(
-            #f"hdfs dfs -get {base_dir}/KiruhaLapin_train_out {base_dir}/KiruhaLapin_train_out_local"
-            f"hdfs dfs -get KiruhaLapin_train_out {base_dir}/KiruhaLapin_train_out_local"
-        ),
+        bash_command=f"hdfs dfs -get KiruhaLapin_train_out {base_dir}/KiruhaLapin_train_out_local",
     )
 
     # Обучение модели
     train_task = BashOperator(
         task_id='train_task',
         bash_command=(
-            f"{pyspark_python} {base_dir}/train_sklearn.py "
+            f"/opt/conda/envs/dsenv/bin/python {base_dir}/train_sklearn.py "
             f"--train-in {base_dir}/KiruhaLapin_train_out_local "
             f"--sklearn-model-out {base_dir}/6.joblib"
         ),
     )
 
-    # Проверка наличия модели
+    # Сенсор модели
     model_sensor = FileSensor(
         task_id='model_sensor',
         filepath=f"{base_dir}/6.joblib",
         poke_interval=30,
-        timeout=10,
+        timeout=600  # Увеличьте таймаут до 10 минут
     )
 
     # Feature engineering для тестовых данных
     feature_eng_test_task = SparkSubmitOperator(
         task_id='feature_eng_test_task',
         application=f"{base_dir}/spark_feature_eng.py",
-        conn_id='spark_default',
         application_args=[
             '--path-in', '/datasets/amazon/amazon_extrasmall_test.json',
-            #'--path-out', f"{base_dir}/KiruhaLapin_test_out"
-            '--path-out', f"KiruhaLapin_test_out"
+            '--path-out', 'KiruhaLapin_test_out'
         ],
-        env_vars={'PYSPARK_PYTHON': pyspark_python},
+        **spark_defaults
     )
 
     # Предсказание
     predict_task = SparkSubmitOperator(
         task_id='predict_task',
         application=f"{base_dir}/spark_inference.py",
-        conn_id='spark_default',
-        spark_binary="/usr/bin/spark3-submit",
         application_args=[
-            #'--test-in', f"{base_dir}/KiruhaLapin_test_out",
-            #'--pred-out', f"{base_dir}/KiruhaLapin_hw6_prediction",
-            '--test-in', f"KiruhaLapin_test_out",
-            '--pred-out', f"KiruhaLapin_hw6_prediction",
+            '--test-in', 'KiruhaLapin_test_out',
+            '--pred-out', 'KiruhaLapin_hw6_prediction',
             '--sklearn-model-in', f"{base_dir}/6.joblib"
         ],
-        env_vars={'PYSPARK_PYTHON': pyspark_python},
+        **spark_defaults
     )
 
     feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task
