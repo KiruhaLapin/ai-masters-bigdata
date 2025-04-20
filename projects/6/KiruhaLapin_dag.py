@@ -16,19 +16,9 @@ with DAG(
 
     base_dir = '{{ dag_run.conf["base_dir"] if dag_run else "" }}'
 
-    feature_eng_train_task = SparkSubmitOperator(
-    task_id="feature_eng_train_task",
-    application=f"/opt/airflow/airflow_home/dags/example/spark_example/spark_example.py",
-    spark_binary="/usr/bin/spark3-submit",
-    num_executors=10,
-    executor_cores=1,
-    executor_memory="2G",
-    env_vars={"PYSPARK_PYTHON": pyspark_python},
-)
-
     # Feature engineering для тренировочных данных
-    feature_eng_train_task2 = SparkSubmitOperator(
-        task_id='feature_eng_train_task2',
+    feature_eng_train_task = SparkSubmitOperator(
+        task_id='feature_eng_train_task',
         application=f"{base_dir}/spark_feature_eng.py",
         conn_id='spark_default',
         spark_binary="/usr/bin/spark3-submit",
