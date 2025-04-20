@@ -24,7 +24,7 @@ df = pd.concat([pd.read_csv(f) for f in csv_files])
 
 target_col = 'label'
 
-X = df.drop(columns=[target_col])
+X = df.drop(columns=[target_col, "id"])
 y = df[target_col]
 
 model = RandomForestClassifier(random_state=42, n_jobs=-1)
