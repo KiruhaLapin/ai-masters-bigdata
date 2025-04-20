@@ -79,6 +79,6 @@ with DAG(
         env_vars={'PYSPARK_PYTHON': pyspark_python},
     )
 
-    feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task>>download_pred_task
+    feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task
 
 
