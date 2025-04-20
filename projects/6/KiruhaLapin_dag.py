@@ -3,7 +3,7 @@ from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOpe
 from airflow.sensors.filesystem import FileSensor
 from airflow.operators.bash import BashOperator
 from datetime import datetime
-'''
+
 pyspark_python = "/opt/conda/envs/dsenv/bin/python"
 
 with DAG(
@@ -19,14 +19,23 @@ with DAG(
     # Feature engineering для тренировочных данных
     feature_eng_train_task = SparkSubmitOperator(
         task_id='feature_eng_train_task',
-        application=f"{base_dir}/spark_feature_eng.py",
+        # Явно указываем путь к spark3-submit
         conn_id='spark_default',
+        application=f"{base_dir}/spark_feature_eng.py",
+        # Указываем spark3-submit и переменные окружения
+        spark_binary="/usr/bin/spark3-submit",  # Ключевое исправление!
+        env_vars={
+            'PYSPARK_PYTHON': "/opt/conda/envs/dsenv/bin/python",
+            'PYSPARK_DRIVER_PYTHON': "/opt/conda/envs/dsenv/bin/python"
+        },
         application_args=[
             '--path-in', '/datasets/amazon/amazon_extrasmall_train.json',
-            #'--path-out', f"{base_dir}/KiruhaLapin_train_out"
-            '--path-out', f"KiruhaLapin_train_out"
+            '--path-out', 'KiruhaLapin_train_out'  # Относительный путь в HDFS
         ],
-        env_vars={'PYSPARK_PYTHON': pyspark_python},
+        # Указываем правильную очередь
+        conf={
+            "spark.yarn.queue": "default"
+        }
     )
 
     # Загрузка обработанных тренировочных данных в локальную ФС
@@ -85,9 +94,9 @@ with DAG(
     )
 
     feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task
+
+
 '''
-
-
 from airflow import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.sensors.filesystem import FileSensor
@@ -177,4 +186,4 @@ with DAG(
     )
 
     feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task>>download_pred_task
-
+'''
