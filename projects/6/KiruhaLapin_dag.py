@@ -6,6 +6,7 @@ from datetime import datetime
 
 
 #lol
+'''
 with DAG(
     dag_id='KiruhaLapin_dag',
     start_date=datetime(2025, 4, 20),
@@ -93,5 +94,5 @@ with DAG(
     )
 
     feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task
-
+'''
 
