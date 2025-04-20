@@ -30,7 +30,10 @@ def main():
     # UDF для предсказания
     @pandas_udf(DoubleType())
     def predict_udf(*cols: pd.Series) -> pd.Series:
+        # собираем табличку и сразу именуем колонки так же, как при обучении
         features = pd.concat(cols, axis=1)
+        features.columns = feature_columns
+        # теперь model.predict найдёт знакомые имена
         return pd.Series(model.predict(features))
 
     # Применяем модель
@@ -41,7 +44,7 @@ def main():
 
     # Сохраняем результат
     df_with_pred.select('id', 'prediction') \
-        .write.csv(args.pred_out, header=False)
+        .write.csv(args.pred_out, header=False, mode='overwrite')
 
     spark.stop()
 
