@@ -18,31 +18,26 @@ with DAG(
 
     # Feature engineering для тренировочных данных
     feature_eng_train_task = SparkSubmitOperator(
-        task_id='feature_eng_train_task',
-        application=f"{base_dir}/spark_feature_eng.py",
-        conn_id='spark_default',
-        
-        # 1. Указываем полный путь к spark3-submit
-        spark_binary="/usr/bin/spark3-submit",
-        
-        # 2. Добавляем SPARK_HOME в переменные окружения
-        env_vars={
-            "PYSPARK_PYTHON": "/opt/conda/envs/dsenv/bin/python",
-            "PYSPARK_DRIVER_PYTHON": "/opt/conda/envs/dsenv/bin/python",
-            "SPARK_HOME": "/usr/lib/spark"  # Этот путь нужно проверить!
-        },
-        
-        # 3. Указываем дополнительные конфиги
-        conf={
-            "spark.yarn.queue": "default",
-            "spark.submit.deployMode": "client"
-        },
-        
-        # 4. Исправляем путь для вывода
-        application_args=[
-            '--path-in', '/datasets/amazon/amazon_extrasmall_train.json',
-            '--path-out', 'KiruhaLapin_train_out'  # Без слешей в начале!
-        ]
+    task_id='feature_eng_train_task',
+    application=f"{base_dir}/spark_feature_eng.py",
+    conn_id='spark_default',
+    # Указываем явный путь к spark3-submit
+    spark_binary="/usr/bin/spark3-submit",
+    # Добавляем обязательные переменные окружения
+    env_vars={
+        "SPARK_HOME": "/usr/lib/spark3",  # Проверьте реальный путь через `ls -l /usr/lib/spark*`
+        "PYSPARK_PYTHON": "/opt/conda/envs/dsenv/bin/python",
+        "PYSPARK_DRIVER_PYTHON": "/opt/conda/envs/dsenv/bin/python"
+    },
+    # Указываем конфигурацию
+    conf={
+        "spark.yarn.queue": "default",
+        "spark.submit.deployMode": "client"
+    },
+    application_args=[
+        '--path-in', '/datasets/amazon/amazon_extrasmall_train.json',
+        '--path-out', 'KiruhaLapin_train_out'  # Относительный путь в HDFS
+    ]
     )
 
     # Загрузка обработанных тренировочных данных в локальную ФС
