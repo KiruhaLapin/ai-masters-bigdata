@@ -3,7 +3,7 @@ from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOpe
 from airflow.sensors.filesystem import FileSensor
 from airflow.operators.bash import BashOperator
 from datetime import datetime
-
+'''
 pyspark_python = "/opt/conda/envs/dsenv/bin/python"
 
 with DAG(
@@ -85,9 +85,9 @@ with DAG(
     )
 
     feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task
-
-
 '''
+
+
 from airflow import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.sensors.filesystem import FileSensor
@@ -177,4 +177,4 @@ with DAG(
     )
 
     feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task>>download_pred_task
-'''
+
