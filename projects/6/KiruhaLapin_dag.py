@@ -45,7 +45,10 @@ with DAG(
     # Загрузка данных
     download_train_task = BashOperator(
         task_id='download_train_task',
-        bash_command=f"hdfs dfs -get KiruhaLapin_train_out {base_dir}/KiruhaLapin_train_out_local",
+        bash_command=(
+            # Скачать все CSV-файлы из директории HDFS в локальную папку
+            f"hdfs dfs -get KiruhaLapin_train_out/*.csv {base_dir}/KiruhaLapin_train_out_local.csv"
+        ),
     )
 
     # Обучение модели

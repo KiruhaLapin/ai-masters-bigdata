@@ -6,12 +6,21 @@ import pandas as pd
 import joblib
 from sklearn.ensemble import RandomForestClassifier
 
-parser = argparse.ArgumentParser(description="Train sklearn RandomForestClassifier on CSV data with target column 'label'")
-parser.add_argument("--train-in", type=str, required=True, help="Путь к входным данным (CSV-файл или директория с CSV)")
-parser.add_argument("--sklearn-model-out", type=str, required=True, help="Путь для сохранения обученной модели (joblib)")
+import pandas as pd
+import argparse
+import glob
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--train-in", type=str, required=True)
+parser.add_argument("--sklearn-model-out", type=str, required=True)
 args = parser.parse_args()
 
-df = pd.read_csv(args.train_in)
+# Читаем все CSV-файлы из директории
+csv_files = glob.glob(os.path.join(args.train_in, "*.csv"))
+df = pd.concat([pd.read_csv(f) for f in csv_files])
+
+# Остальной код...
 
 target_col = 'label'
 
