@@ -23,14 +23,7 @@ with DAG(
         conn_id='spark_default',
         spark_binary="/usr/bin/spark3-submit",
         env_vars={
-            "SPARK_HOME": "/usr/lib/spark3",
             "PYSPARK_PYTHON": "/opt/conda/envs/dsenv/bin/python",
-            "PYSPARK_DRIVER_PYTHON": "/opt/conda/envs/dsenv/bin/python"
-        },
-        conf={
-            "spark.yarn.queue": "default",
-            "spark.submit.deployMode": "client",
-            "spark.yarn.appMasterEnv.PYSPARK_PYTHON": "/opt/conda/envs/dsenv/bin/python"
         },
         application_args=[
             '--path-in', '/datasets/amazon/amazon_extrasmall_train.json',
@@ -83,6 +76,7 @@ with DAG(
         task_id='predict_task',
         application=f"{base_dir}/spark_inference.py",
         conn_id='spark_default',
+        spark_binary="/usr/bin/spark3-submit",
         application_args=[
             #'--test-in', f"{base_dir}/KiruhaLapin_test_out",
             #'--pred-out', f"{base_dir}/KiruhaLapin_hw6_prediction",
