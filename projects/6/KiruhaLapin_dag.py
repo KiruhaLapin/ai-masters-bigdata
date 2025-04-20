@@ -27,8 +27,8 @@ with DAG(
 )
 
     # Feature engineering для тренировочных данных
-    feature_eng_train_task = SparkSubmitOperator(
-        task_id='feature_eng_train_task',
+    feature_eng_train_task2 = SparkSubmitOperator(
+        task_id='feature_eng_train_task2',
         application=f"{base_dir}/spark_feature_eng.py",
         conn_id='spark_default',
         spark_binary="/usr/bin/spark3-submit",
