@@ -51,7 +51,7 @@ with DAG(
         task_id='model_sensor',
         filepath=f"{base_dir}/6.joblib",
         poke_interval=30,
-        timeout=600,
+        timeout=10,
     )
 
     # Feature engineering для тестовых данных

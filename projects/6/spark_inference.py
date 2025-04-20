@@ -41,7 +41,7 @@ def main():
 
     # Сохраняем результат
     df_with_pred.select('id', 'prediction') \
-        .write.mode('overwrite').parquet(args.pred_out)
+        .write.mode('overwrite').csv(args.pred_out)
 
     spark.stop()
 
