@@ -3,7 +3,7 @@ from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOpe
 from airflow.sensors.filesystem import FileSensor
 from airflow.operators.bash import BashOperator
 from datetime import datetime
-'''
+
 pyspark_python = "/opt/conda/envs/dsenv/bin/python"
 
 with DAG(
@@ -88,44 +88,5 @@ with DAG(
     )
 
     feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task
-'''
-
-import json
-import os
-
-#from textwrap import dedent
-from airflow.operators.bash import BashOperator
-
-import pendulum
-
-# The DAG object; we'll need this to instantiate a DAG
-from airflow import DAG
 
 
-#AIRFLOW_HOME=os.environ.get("AIRFLOW_HOME", 
-#                            f'{os.environ["HOME"]}/airflow')
-
-with DAG(
-    'KiruhaLapin_dag',
-    # These args will get passed on to each operator
-    # You can override them on a per-task basis during operator initialization
-    default_args={'retries': 2},
-    description='sample hello world dag',
-    schedule=None,
-    start_date=pendulum.datetime(2025, 4, 4, tz="UTC"),
-    catchup=False,
-    tags=['aimasters'],
-) as dag:
-    dag.doc_md = __doc__
-
-    hello_world_task = BashOperator(
-         task_id='hello_world_task',
-         bash_command = f'echo Hello World'
-    )
-
-    hello_user_task = BashOperator(
-         task_id='hello_user_task', 
-         bash_command = f'echo Hello KiruhaLapin'
-    )
-
-    hello_user_task >> hello_world_task
