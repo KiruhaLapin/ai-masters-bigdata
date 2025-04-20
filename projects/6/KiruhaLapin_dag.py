@@ -42,12 +42,13 @@ with DAG(
         **spark_defaults
     )
 
-    # Загрузка данных
     download_train_task = BashOperator(
         task_id='download_train_task',
         bash_command=(
-            # Скачать все CSV-файлы из директории HDFS в локальную папку
-            f"hdfs dfs -get KiruhaLapin_train_out/*.csv {base_dir}/KiruhaLapin_train_out_local.csv"
+            # 1. Создать локальную директорию
+            f"mkdir -p {base_dir}/KiruhaLapin_train_out_local && "
+            # 2. Скопировать ВСЕ файлы из HDFS-директории
+            f"hdfs dfs -get hdfs:///user/KiruhaLapin/KiruhaLapin_train_out/* {base_dir}/KiruhaLapin_train_out_local/"
         ),
     )
 
