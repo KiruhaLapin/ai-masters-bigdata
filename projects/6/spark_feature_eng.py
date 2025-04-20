@@ -1,4 +1,5 @@
 import argparse
+print("lol")
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, when, length, to_date, year, month, dayofmonth
 
