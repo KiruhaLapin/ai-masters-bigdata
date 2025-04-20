@@ -19,20 +19,20 @@ with DAG(
     # Feature engineering для тренировочных данных
     feature_eng_train_task = SparkSubmitOperator(
         task_id='feature_eng_train_task',
-        # Явно указываем путь к spark3-submit
-        conn_id='spark_default',
         application=f"{base_dir}/spark_feature_eng.py",
-        # Указываем spark3-submit и переменные окружения
-        spark_binary="/usr/bin/spark3-submit",  # Ключевое исправление!
+        conn_id='spark_default',
+        # Явно указываем путь к spark3-submit
+        spark_binary="/usr/bin/spark3-submit",
+        # Указываем переменные окружения
         env_vars={
-            'PYSPARK_PYTHON': "/opt/conda/envs/dsenv/bin/python",
-            'PYSPARK_DRIVER_PYTHON': "/opt/conda/envs/dsenv/bin/python"
+            "PYSPARK_PYTHON": "/opt/conda/envs/dsenv/bin/python",
+            "PYSPARK_DRIVER_PYTHON": "/opt/conda/envs/dsenv/bin/python"
         },
         application_args=[
             '--path-in', '/datasets/amazon/amazon_extrasmall_train.json',
             '--path-out', 'KiruhaLapin_train_out'  # Относительный путь в HDFS
         ],
-        # Указываем правильную очередь
+        # Указываем очередь
         conf={
             "spark.yarn.queue": "default"
         }
