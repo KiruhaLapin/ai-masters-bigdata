@@ -23,7 +23,8 @@ with DAG(
         conn_id='spark_default',
         application_args=[
             '--path-in', '/datasets/amazon/amazon_extrasmall_train.json',
-            '--path-out', f"{base_dir}/KiruhaLapin_train_out"
+            #'--path-out', f"{base_dir}/KiruhaLapin_train_out"
+            '--path-out', f"KiruhaLapin_train_out"
         ],
         env_vars={'PYSPARK_PYTHON': pyspark_python},
     )
@@ -32,7 +33,8 @@ with DAG(
     download_train_task = BashOperator(
         task_id='download_train_task',
         bash_command=(
-            f"hdfs dfs -get {base_dir}/KiruhaLapin_train_out {base_dir}/KiruhaLapin_train_out_local"
+            #f"hdfs dfs -get {base_dir}/KiruhaLapin_train_out {base_dir}/KiruhaLapin_train_out_local"
+            f"hdfs dfs -get KiruhaLapin_train_out {base_dir}/KiruhaLapin_train_out_local"
         ),
     )
 
@@ -61,7 +63,8 @@ with DAG(
         conn_id='spark_default',
         application_args=[
             '--path-in', '/datasets/amazon/amazon_extrasmall_test.json',
-            '--path-out', f"{base_dir}/KiruhaLapin_test_out"
+            #'--path-out', f"{base_dir}/KiruhaLapin_test_out"
+            '--path-out', f"/KiruhaLapin_test_out"
         ],
         env_vars={'PYSPARK_PYTHON': pyspark_python},
     )
@@ -72,8 +75,10 @@ with DAG(
         application=f"{base_dir}/spark_inference.py",
         conn_id='spark_default',
         application_args=[
-            '--test-in', f"{base_dir}/KiruhaLapin_test_out",
-            '--pred-out', f"{base_dir}/KiruhaLapin_hw6_prediction",
+            #'--test-in', f"{base_dir}/KiruhaLapin_test_out",
+            #'--pred-out', f"{base_dir}/KiruhaLapin_hw6_prediction",
+            '--test-in', f"KiruhaLapin_test_out",
+            '--pred-out', f"KiruhaLapin_hw6_prediction",
             '--sklearn-model-in', f"{base_dir}/6.joblib"
         ],
         env_vars={'PYSPARK_PYTHON': pyspark_python},
