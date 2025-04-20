@@ -78,7 +78,14 @@ with DAG(
         ],
         env_vars={'PYSPARK_PYTHON': pyspark_python},
     )
+    download_pred_task = BashOperator(
+    task_id='download_pred_task',
+    bash_command=(
+        f"hdfs dfs -get {base_dir}/KiruhaLapin_hw6_prediction "
+        f"{base_dir}/KiruhaLapin_hw6_prediction_local"
+        ),
+    )
 
-    feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task
+    feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task>>download_pred_task
 
 
