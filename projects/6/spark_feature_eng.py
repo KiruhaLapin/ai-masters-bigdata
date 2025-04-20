@@ -12,6 +12,8 @@ def parse_args():
 
 def main(path_in: str, path_out: str):
     spark = SparkSession.builder.appName("spark_feature_eng").getOrCreate()
+    spark.sparkContext.setLogLevel("WARN")
+    print("lol")
     df = spark.read.json(path_in)
     df = df.withColumn('vote', col('vote').cast('int'))
     df = df.fillna({'vote': 0})
