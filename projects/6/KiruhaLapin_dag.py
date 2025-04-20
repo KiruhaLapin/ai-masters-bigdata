@@ -46,9 +46,8 @@ with DAG(
         task_id='download_train_task',
         bash_command=(
             # 1. Создать локальную директорию
-            f"mkdir -p {base_dir}/KiruhaLapin_train_out_local && "
             # 2. Скопировать ВСЕ файлы из HDFS-директории
-            f"hdfs dfs -get hdfs:///user/KiruhaLapin/KiruhaLapin_train_out/* {base_dir}/KiruhaLapin_train_out_local/"
+            f"hdfs dfs -get /user/ubuntu/KiruhaLapin_train_out/* {base_dir}/KiruhaLapin_train_out_local/"
         ),
     )
 
