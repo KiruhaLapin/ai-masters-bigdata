@@ -4,9 +4,6 @@ from airflow.sensors.filesystem import FileSensor
 from airflow.operators.bash import BashOperator
 from datetime import datetime
 
-
-#lol
-
 with DAG(
     dag_id='KiruhaLapin_dag',
     start_date=datetime(2025, 4, 20),
@@ -15,16 +12,16 @@ with DAG(
     tags=['hw6']
 ) as dag:
 
+    # base_dir подставится из dag_run.conf, либо будет пустой строкой
     base_dir = '{{ dag_run.conf["base_dir"] if dag_run else "" }}'
 
-    # Общие настройки для SparkSubmitOperator
     spark_defaults = {
         "spark_binary": "/usr/bin/spark3-submit",
         "conn_id": "spark_default",
         "env_vars": {
             "PYSPARK_PYTHON": "/opt/conda/envs/dsenv/bin/python",
             "PYSPARK_DRIVER_PYTHON": "/opt/conda/envs/dsenv/bin/python",
-            "SPARK_HOME": "/usr/lib/spark3"  # Проверьте точный путь!
+            "SPARK_HOME": "/usr/lib/spark3"
         },
         "conf": {
             "spark.yarn.queue": "default",
@@ -32,45 +29,46 @@ with DAG(
         }
     }
 
-    # Feature engineering для тренировочных данных
+    # 1) Feature engineering тренировочных данных (в HDFS: KiruhaLapin_train_out)
     feature_eng_train_task = SparkSubmitOperator(
         task_id='feature_eng_train_task',
         application=f"{base_dir}/spark_feature_eng.py",
         application_args=[
             '--path-in', '/datasets/amazon/amazon_extrasmall_train.json',
-            '--path-out', 'KiruhaLapin_train_out'  # Относительный путь в HDFS
+            '--path-out', 'KiruhaLapin_train_out'
         ],
         **spark_defaults
     )
 
+    # 2) Скачиваем из HDFS в локалку base_dir/KiruhaLapin_train_out_local
     download_train_task = BashOperator(
         task_id='download_train_task',
-        bash_command=f"""
-        mkdir -p {base_dir}/KiruhaLapin_train_out_local/ && \
-        hdfs dfs -get /user/ubuntu/KiruhaLapin_train_out/* {base_dir}/KiruhaLapin_train_out_local/
-        """,
-        dag=dag
+        bash_command=(
+            f"mkdir -p {base_dir}/KiruhaLapin_train_out_local && "
+            f"hdfs dfs -get KiruhaLapin_train_out/* {base_dir}/KiruhaLapin_train_out_local/"
+        )
     )
 
-    # Обучение модели
+    # 3) Обучаем sklearn-модель, сохраняем в base_dir/6.joblib
     train_task = BashOperator(
         task_id='train_task',
         bash_command=(
             f"/opt/conda/envs/dsenv/bin/python {base_dir}/train_sklearn.py "
             f"--train-in {base_dir}/KiruhaLapin_train_out_local "
             f"--sklearn-model-out {base_dir}/6.joblib"
-        ),
+        )
     )
 
-    # Сенсор модели
+    # 4) Ждём файл модели в base_dir
     model_sensor = FileSensor(
         task_id='model_sensor',
         filepath=f"{base_dir}/6.joblib",
         poke_interval=30,
-        timeout=600  # Увеличьте таймаут до 10 минут
+        timeout=60 * 10,  # 10 минут
+        mode='poke'
     )
 
-    # Feature engineering для тестовых данных
+    # 5) Feature engineering тестовых данных в HDFS: KiruhaLapin_test_out
     feature_eng_test_task = SparkSubmitOperator(
         task_id='feature_eng_test_task',
         application=f"{base_dir}/spark_feature_eng.py",
@@ -81,7 +79,7 @@ with DAG(
         **spark_defaults
     )
 
-    # Предсказание
+    # 6) Предсказание: читаем модель из base_dir, пишем HDFS: KiruhaLapin_hw6_prediction
     predict_task = SparkSubmitOperator(
         task_id='predict_task',
         application=f"{base_dir}/spark_inference.py",
@@ -93,6 +91,13 @@ with DAG(
         **spark_defaults
     )
 
-    feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task
+    feature_eng_train_task \
+        >> download_train_task \
+        >> train_task \
+        >> model_sensor \
+        >> feature_eng_test_task \
+        >> predict_task
+
+
 
 
