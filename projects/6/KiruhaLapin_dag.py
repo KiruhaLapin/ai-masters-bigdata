@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 #lol
-'''
+
 with DAG(
     dag_id='KiruhaLapin_dag',
     start_date=datetime(2025, 4, 20),
@@ -45,11 +45,11 @@ with DAG(
 
     download_train_task = BashOperator(
         task_id='download_train_task',
-        bash_command=(
-            # 1. Создать локальную директорию
-            # 2. Скопировать ВСЕ файлы из HDFS-директории
-            f"hdfs dfs -get /user/ubuntu/KiruhaLapin_train_out/* {base_dir}/KiruhaLapin_train_out_local/"
-        ),
+        bash_command=f"""
+        mkdir -p {base_dir}/KiruhaLapin_train_out_local/ && \
+        hdfs dfs -get /user/ubuntu/KiruhaLapin_train_out/* {base_dir}/KiruhaLapin_train_out_local/
+        """,
+        dag=dag
     )
 
     # Обучение модели
@@ -94,5 +94,5 @@ with DAG(
     )
 
     feature_eng_train_task >> download_train_task >> train_task >> model_sensor >> feature_eng_test_task >> predict_task
-'''
+
 
