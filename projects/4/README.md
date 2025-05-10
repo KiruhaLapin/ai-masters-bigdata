@@ -14,9 +14,6 @@
 ## Структура проекта (`projects/4`)
 - `model.py` — определение Spark ML Pipeline в переменной `pipeline`.
 - `train.py` — скрипт для обучения модели:
-  ```bash
-  spark3-submit     --master yarn     --name train     --py-files projects/4/model.py     projects/4/train.py <TRAIN_PATH> <MODEL_PATH>
-  ```
   Аргументы:
   1. `<TRAIN_PATH>` — путь в HDFS к тренировочному JSON.
   2. `<MODEL_PATH>` — директория для сохранения модели.
