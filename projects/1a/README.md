@@ -14,7 +14,6 @@
 - `filter.py` — маппер для фильтрации записей
 - `filter.sh` — запуск фильтрации через Hadoop Streaming
 - `filter_predict.sh` — объединённый map-reduce: фильтрация на стадии map и предсказания на стадии reduce
-- `local_scorer.py` — локальный расчёт метрики LogLoss (использует `sklearn`)
 
 ## Запуск
 1. **Обучение**
