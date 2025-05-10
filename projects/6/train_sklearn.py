@@ -20,8 +20,6 @@ args = parser.parse_args()
 csv_files = glob.glob(os.path.join(args.train_in, "*.csv"))
 df = pd.concat([pd.read_csv(f) for f in csv_files])
 
-# Остальной код...
-
 target_col = 'label'
 
 X = df.drop(columns=[target_col, "id"])
